@@ -4,7 +4,7 @@ const HPCLSchema = new mongoose.Schema({
     name: String,
     location: String,
     installation_date: Date,
-    status: String,
+    status: Boolean,
     logs: Array
 })
 
