@@ -32,59 +32,49 @@ hpclrouter.patch("/hpcl/:id", async (req, res) => {
         let status = req.body.status
         let statusValue = req.body.statusValue
 
+        // if (status === "is_Use") {
+        //     if (statusValue) {
+        //         singlehpcl.is_Use = statusValue
+        //         singlehpcl.is_maintenance = false
+        //         // singlehpcl.is_calibration = false
+        //     } else {
+        //         singlehpcl.is_Use = statusValue
+        //         singlehpcl.is_calibration = false
+        //     }
+        // } else if (status === "is_maintenance") {
+        //     singlehpcl.is_maintenance = statusValue
+        //     if (!singlehpcl.is_Use) { //is  OFF
+        //         // singlehpcl.is_maintenance = statusValue
+        //         // if (singlehpcl.is_Use) singlehpcl.is_Use = false
+        //         if (singlehpcl.is_calibration) singlehpcl.is_calibration = false
+        //     } else { // is ON
+        //         // singlehpcl.is_maintenance = statusValue
+        //         singlehpcl.is_Use = false
+        //         if (singlehpcl.is_calibration) singlehpcl.is_calibration = false
+        //     }
+        // } else if (status === "is_calibration") {
+        //     singlehpcl.is_calibration = statusValue
+        //     if (singlehpcl.is_Use) { //is  ON
+        //         if (singlehpcl.is_maintenance) singlehpcl.is_maintenance = false
+        //     } else { //is  OFF
+        //         singlehpcl.is_Use = true
+        //         if (singlehpcl.is_maintenance) singlehpcl.is_maintenance = false
+        //     }
+        // }
+
         if (status === "is_Use") {
-            if (statusValue) {
-                singlehpcl.is_Use = statusValue
-                singlehpcl.is_maintenance = false
-                // singlehpcl.is_calibration = false
-            } else {
-                singlehpcl.is_Use = statusValue
-                singlehpcl.is_calibration = false
-            }
+            singlehpcl.is_Use = statusValue
+            if (singlehpcl.is_calibration) singlehpcl.is_calibration = false
+            if (singlehpcl.is_maintenance) singlehpcl.is_maintenance = false
         } else if (status === "is_maintenance") {
             singlehpcl.is_maintenance = statusValue
-            if (!singlehpcl.is_Use) { //is  OFF
-                // singlehpcl.is_maintenance = statusValue
-                // if (singlehpcl.is_Use) singlehpcl.is_Use = false
-                if (singlehpcl.is_calibration) singlehpcl.is_calibration = false
-            } else { // is ON
-                // singlehpcl.is_maintenance = statusValue
-                singlehpcl.is_Use = false
-                if (singlehpcl.is_calibration) singlehpcl.is_calibration = false
-            }
+            if (singlehpcl.is_Use) singlehpcl.is_Use = false
+            if (singlehpcl.is_calibration) singlehpcl.is_calibration = false
         } else if (status === "is_calibration") {
             singlehpcl.is_calibration = statusValue
-            if (singlehpcl.is_Use) { //is  ON
-                if (singlehpcl.is_maintenance) singlehpcl.is_maintenance = false
-            } else { //is  OFF
-                singlehpcl.is_Use = true
-                if (singlehpcl.is_maintenance) singlehpcl.is_maintenance = false
-            }
+            if (singlehpcl.is_Use) singlehpcl.is_Use = false
+            if (singlehpcl.is_maintenance) singlehpcl.is_maintenance = false
         }
-
-
-        // if (status === "is_maintenance" || status === "is_calibration") {
-        //     if (singlehpcl.is_Use) {
-        //         if (singlehpcl.is_maintenance) {
-        //             singlehpcl.is_maintenance = false
-        //             singlehpcl.is_Use = false
-        //         }
-        //         if (!singlehpcl.is_calibration) {
-        //             singlehpcl.is_maintenance = true
-        //         }
-        //     }
-        //     else {
-        //         if (!singlehpcl.is_maintenance) {
-        //             singlehpcl.is_maintenance = true
-        //         }
-        //         if (singlehpcl.is_calibration) {
-        //             singlehpcl.is_maintenance = false
-        //         }
-        //     }
-        // }
-        // else {
-        //     singlehpcl.is_Use = req.body.statusValue
-        // }
 
         let updatedHPCL = await HPCL.findByIdAndUpdate({ _id: req.params.id }, singlehpcl)
         res.status(200).send(updatedHPCL)
@@ -93,7 +83,7 @@ hpclrouter.patch("/hpcl/:id", async (req, res) => {
     }
 })
 
-hpclrouter.get("/calendar", (req, res) => {
+hpclrouter.get("/calendar", async (req, res) => {
     try {
 
         let date = req.query.date
@@ -145,6 +135,9 @@ hpclrouter.get("/calendar", (req, res) => {
         ]
         for (let i = 0; i < array.length; i++) {
             if (date == array[i].date) {
+
+                let singlehpcl = await HPCL.find({})
+
                 res.status(200).send(array[i])
             }
         }
