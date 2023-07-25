@@ -8,7 +8,12 @@ const TestSchema = new mongoose.Schema({
     wavelength: String,
     injection_volume: String,
     column_temprature: String,
-    cooler_temprature: String
+    cooler_temprature: String,
+    stroke_volume: String,
+    high_limit: String,
+    pump_mode: String,
+
+
 
 })
 

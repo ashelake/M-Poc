@@ -24,6 +24,7 @@ hpclrouter.get("/hpcl/:id", async (req, res) => {
         res.status(404).send(error.message)
     }
 })
+
 hpclrouter.patch("/hpcl/:id", async (req, res) => {
     try {
 
@@ -83,6 +84,7 @@ hpclrouter.patch("/hpcl/:id", async (req, res) => {
     }
 })
 
+
 hpclrouter.get("/calendar", async (req, res) => {
     try {
 
@@ -133,21 +135,147 @@ hpclrouter.get("/calendar", async (req, res) => {
                 maintenance: 10
             }
         ]
-        for (let i = 0; i < array.length; i++) {
-            if (date == array[i].date) {
 
-                let singlehpcl = await HPCL.find({})
+        let allHPCL = await HPCL.find({})
 
-                res.status(200).send(array[i])
+
+
+        // ..........................................................
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
         }
-        res.status(200).send({
-            date: "2023-07-06",
-            used: 0,
-            calibration: 0,
-            maintenance: 0
 
-        })
+        class UniqueRandomSelector {
+            constructor(array) {
+                this.originalArray = array.slice();
+                this.shuffledArray = [];
+                this.currentIndex = 0;
+            }
+
+            initialize() {
+                this.currentIndex = 0;
+                if (this.shuffledArray.length === 0) {
+                    this.shuffledArray = this.originalArray.slice();
+                    shuffleArray(this.shuffledArray);
+                }
+            }
+
+            getNext() {
+                if (this.currentIndex >= this.shuffledArray.length) {
+                    this.initialize();
+                }
+
+                const element = this.shuffledArray[this.currentIndex];
+                this.currentIndex++;
+                return element;
+            }
+
+            getRandomElements(count) {
+                const selectedElements = [];
+                for (let i = 0; i < count; i++) {
+                    selectedElements.push(this.getNext());
+                }
+                return selectedElements;
+            }
+        }
+
+        // Usage example:
+
+
+
+
+        const randomSelector = new UniqueRandomSelector(allHPCL);
+
+
+        // ............................................................
+
+
+        // {
+        //     date: "2023-07-06",
+        //     used: 5,
+        //     calibration: 6,
+        //     maintenance: 10
+        // }
+        let result = []
+        // for (let i = 0; i < array.length; i++) {
+        //     if (date == array[i].date) {
+
+        //         let resObject = {
+        //             date: array[i].date,
+        //             used: array[i].used,
+        //             calibration: array[i].calibration,
+        //             maintenance: array[i].maintenance,
+        //             usedArray: [],
+        //             calibrationArray: [],
+        //             maintenanceArray: [],
+        //         }
+        //         // for (let i = 0; i < 3; i++) {
+
+        //         if (array[i].used) {
+        //             const numberOfElementsToSelect = Number(array[i].used);
+        //             const randomElements = randomSelector.getRandomElements(numberOfElementsToSelect);
+        //             resObject.usedArray = randomElements
+        //         }
+        //         if (array[i].calibration) {
+        //             const numberOfElementsToSelect = Number(array[i].calibration);
+        //             const randomElements = randomSelector.getRandomElements(numberOfElementsToSelect);
+        //             resObject.calibrationArray = randomElements
+        //         }
+        //         if (array[i].maintenance) {
+        //             const numberOfElementsToSelect = Number(array[i].maintenance);
+        //             const randomElements = randomSelector.getRandomElements(numberOfElementsToSelect);
+        //             resObject.maintenanceArray = randomElements
+        //         }
+        //         // }
+
+
+        //         return res.status(200).send(resObject)
+        //     }
+        // }
+
+
+
+        let used1 = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+        let calibration1 = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+        let maintenance1 = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+
+        let resObject1 = {
+            date: date,
+            used: used1,
+            calibration: calibration1,
+            maintenance: maintenance1,
+            usedArray: [],
+            calibrationArray: [],
+            maintenanceArray: [],
+            notUsedArray: []
+        }
+        // for (let i = 0; i < 3; i++) {
+
+        if (resObject1.used) {
+            const numberOfElementsToSelect = Number(resObject1.used);
+            const randomElements = randomSelector.getRandomElements(numberOfElementsToSelect);
+            resObject1.usedArray = randomElements
+        }
+        if (resObject1.calibration) {
+            const numberOfElementsToSelect = Number(resObject1.calibration);
+            const randomElements = randomSelector.getRandomElements(numberOfElementsToSelect);
+            resObject1.calibrationArray = randomElements
+        }
+        if (resObject1.maintenance) {
+            const numberOfElementsToSelect = Number(resObject1.maintenance);
+            const randomElements = randomSelector.getRandomElements(numberOfElementsToSelect);
+            resObject1.maintenanceArray = randomElements
+        }
+        if (resObject1.notUsedArray) {
+            const numberOfElementsToSelect = Math.abs(65 - (Number(resObject1.maintenance) + Number(resObject1.calibration) + Number(resObject1.used)));
+            const randomElements = randomSelector.getRandomElements(numberOfElementsToSelect);
+            resObject1.notUsedArray = randomElements
+        }
+        res.status(200).send(resObject1)
 
     } catch (error) {
         res.status(404).send(error.message)
